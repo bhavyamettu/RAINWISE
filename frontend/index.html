@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAINWISE – Rainwater Harvesting Monitor</title>
+<meta name="description" content="Monitor your rainwater tank, estimate how much rain you can collect, and get simple tips.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="#home">RAINWISE</a>
+    <nav aria-label="Main">
+      <a href="#home">Home</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#demo" class="hot">Workflow Demo</a>
+      <a href="#calculator">Calculator</a>
+      <a href="#recommendations">Tips</a>
+      <a href="#maintenance">Maintenance</a>
+      <a href="#awareness">Awareness</a>
+      <a href="#about">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+<!-- HOME -->
+<section id="home">
+  <div class="hero">
+    <div>
+      <span class="pill-tag">Smart rainwater harvesting</span>
+      <h1>Collect rain.<br>Save water.</h1>
+      <p class="lead">RAINWISE shows how much rainwater your tank holds, how much your roof can collect, and what to do next.</p>
+      <div class="actions">
+        <a class="btn" href="#demo">Watch the workflow demo</a>
+        <a class="btn btn-light" href="#calculator">Calculate my rainwater</a>
+      </div>
+      <div class="hero-stats"><div><b>2 sensors</b><span>rain + water level</span></div><div><b>60 s</b><span>between readings</span></div><div><b>1 mm = 1 L</b><span>per square metre</span></div></div>
+    </div>
+    <div class="tank-wrap"><div class="tank" style="--lvl:68%"><div class="rain big" data-drops="14"></div><div class="water"></div><div class="pct">68%</div></div></div>
+  </div>
+  <div class="grid features">
+    <a class="card link" href="#dashboard"><div class="ico">📊</div><h3>Tank Monitoring</h3><p>Rain, water level and stored water.</p></a>
+    <a class="card link" href="#demo"><div class="ico">⚡</div><h3>Workflow Demo</h3><p>See how a raindrop becomes data.</p></a>
+    <a class="card link" href="#calculator"><div class="ico">🌧️</div><h3>Rainwater Calculator</h3><p>How much can your roof collect?</p></a>
+    <a class="card link" href="#recommendations"><div class="ico">💡</div><h3>Smart Tips</h3><p>Simple advice based on your tank.</p></a>
+    <a class="card link" href="#maintenance"><div class="ico">🔧</div><h3>Maintenance</h3><p>Keep your system clean and working.</p></a>
+  </div>
+</section>
+
+<!-- DASHBOARD -->
+<section id="dashboard" hidden>
+  <h2>Tank Dashboard</h2>
+  <div id="mode-banner" class="banner" role="status">Loading…</div>
+  <div class="grid stats">
+    <div class="card stat"><span class="label">Rainfall</span><strong id="s-rain">–</strong><small id="s-rain-sub"></small></div>
+    <div class="card stat"><span class="label">Tank level</span><strong id="s-level">–</strong><div class="meter" aria-hidden="true"><i id="s-meter"></i></div></div>
+    <div class="card stat"><span class="label">Stored water</span><strong id="s-liters">–</strong><small>litres</small></div>
+    <div class="card stat"><span class="label">Tank status</span><strong id="s-status" class="badge">–</strong></div>
+  </div>
+  <div class="grid charts">
+    <div class="card"><h3>Tank level (%)</h3><div id="chart-level" class="chart"></div></div>
+    <div class="card"><h3>Rain intensity (%)</h3><div id="chart-rain" class="chart"></div></div>
+  </div>
+  <details class="card setup">
+    <summary>Tank setup</summary>
+    <p class="muted">Enter your tank sizes so the level and litres are correct.</p>
+    <form id="settings-form" class="form">
+      <label>Tank height (cm)<input type="number" name="tank_height_cm" min="11" step="any" required></label>
+      <label>Tank capacity (litres)<input type="number" name="tank_capacity_l" min="11" step="any" required></label>
+      <label>Sensor gap when full (cm)<input type="number" name="sensor_offset_cm" min="0" step="any" required></label>
+      <button class="btn" type="submit">Save setup</button>
+      <p id="settings-msg" class="msg" role="status"></p>
+    </form>
+  </details>
+</section>
+
+<!-- WORKFLOW DEMO -->
+<section id="demo" hidden>
+  <h2>Workflow Demo</h2>
+  <p class="lead">No hardware needed. Press play to follow one storm from the sensor to your screen, or move the sliders yourself.</p>
+  <div class="actions"><button class="btn" id="d-play" type="button">▶ Play storm demo</button><button class="btn btn-light" id="d-reset" type="button">Reset</button></div>
+  <div class="pipe" id="pipe" role="list" aria-label="Data flow">
+    <div class="node" role="listitem"><div class="dot">🌧️</div>Sensors<small>Rain + HC-SR04</small></div>
+    <div class="node" role="listitem"><div class="dot">📟</div>ESP32<small>Reads values</small></div>
+    <div class="node" role="listitem"><div class="dot">📡</div>Wi-Fi<small>Sends JSON</small></div>
+    <div class="node" role="listitem"><div class="dot">🗄️</div>Server<small>Saves + calculates</small></div>
+    <div class="node" role="listitem"><div class="dot">💻</div>Website<small>Shows advice</small></div>
+  </div>
+  <div class="demo-grid">
+    <div class="card tank-wrap"><div class="tank" id="d-tank" style="--lvl:40%"><div class="rain big" id="d-rain" data-drops="16"></div><div class="water"></div><div class="pct" id="d-pct">40%</div></div></div>
+    <div class="card">
+      <div class="sliders">
+        <label>Rain wetness: <span id="d-rv">0%</span><input type="range" id="d-r" min="0" max="100" value="0"></label>
+        <label>Water distance: <span id="d-dv">100 cm</span><input type="range" id="d-d" min="20" max="170" value="100"></label>
+      </div>
+      <div class="out"><div><b id="o-lvl">–</b><span>Tank level</span></div><div><b id="o-l">–</b><span>Litres stored</span></div><div><b id="o-st">–</b><span>Status</span></div></div>
+      <div id="d-tip" class="demo-tip">–</div>
+      <div class="console" id="d-log" aria-live="polite"></div>
+    </div>
+  </div>
+  <p class="muted">Demo uses a sample tank (150 cm tall, 1000 litres, 20 cm sensor gap). Nothing here is saved.</p>
+</section>
+
+<!-- CALCULATOR -->
+<section id="calculator" hidden>
+  <h2>Rainwater Calculator</h2>
+  <p class="lead">Find out how much water your roof can collect.</p>
+  <div class="grid two">
+    <form id="calc-form" class="card form">
+      <label>Rooftop area
+        <span class="row">
+          <input type="number" id="c-area" min="0.1" step="any" required placeholder="e.g. 100">
+          <select id="c-unit" aria-label="Area unit"><option value="1">sq metre</option><option value="0.092903">sq feet</option></select>
+        </span>
+      </label>
+      <label>Rainfall (mm)
+        <input type="number" id="c-rain" min="0" step="any" required placeholder="e.g. 50">
+        <small class="muted">Use one rain event or a month's total.</small>
+      </label>
+      <label>Roof type
+        <select id="c-eff">
+          <option value="0.9">Metal sheet</option>
+          <option value="0.8" selected>Concrete or tile</option>
+          <option value="0.7">Old or rough roof</option>
+        </select>
+      </label>
+      <button class="btn" type="submit">Calculate</button>
+      <p id="calc-msg" class="msg" role="alert"></p>
+    </form>
+    <div class="card result" id="calc-result" aria-live="polite">
+      <p class="muted">Your result will appear here.</p>
+    </div>
+  </div>
+  <p class="muted">Formula: area (m²) × rainfall (mm) × roof efficiency = litres. Real results may be a little lower.</p>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section id="recommendations" hidden>
+  <h2>Smart Recommendations</h2>
+  <div id="rec-banner" class="banner" role="status"></div>
+  <div id="rec-list" class="stack"></div>
+</section>
+
+<!-- MAINTENANCE -->
+<section id="maintenance" hidden>
+  <h2>Maintenance Alerts</h2>
+  <p class="lead">Regular care keeps your water clean and your system working.</p>
+  <div id="task-list" class="stack"></div>
+</section>
+
+<!-- AWARENESS -->
+<section id="awareness" hidden>
+  <h2>Community Awareness</h2>
+  <div class="card"><h3>What is rainwater harvesting?</h3>
+    <p>Collecting rain from rooftops and storing it for later use, instead of letting it run away.</p></div>
+  <h3>Benefits</h3>
+  <div class="grid two">
+    <div class="card"><h4>Saves water</h4><p>Less need for borewell, tanker or piped water.</p></div>
+    <div class="card"><h4>Saves money</h4><p>Lower water bills and fewer tanker trips.</p></div>
+    <div class="card"><h4>Helps the ground</h4><p>Extra water can refill groundwater and reduce flooding.</p></div>
+    <div class="card"><h4>Useful in dry months</h4><p>Stored water is ready when supply is short.</p></div>
+  </div>
+  <h3>Water-saving tips</h3>
+  <ul class="tips">
+    <li>Fix leaking taps and pipes quickly.</li>
+    <li>Turn off the tap while brushing or washing.</li>
+    <li>Use stored rainwater for plants, cleaning and washing.</li>
+    <li>Water plants early morning or evening.</li>
+    <li>Keep the tank lid closed to stop mosquitoes and dirt.</li>
+    <li>Share these tips with neighbours and family.</li>
+  </ul>
+  <p class="muted">Rainwater is not safe to drink unless it is filtered and treated first.</p>
+</section>
+
+<!-- ABOUT -->
+<section id="about" hidden>
+  <h2>About RAINWISE</h2>
+  <p>RAINWISE – Intelligent Rainwater Harvesting Monitoring and Decision Support System – is a community service project that helps people use rainwater wisely.</p>
+  <h3>How it works</h3>
+  <ol class="steps">
+    <li>An ESP32 board reads a rain sensor and a water-level sensor (HC-SR04) on the tank.</li>
+    <li>It sends the readings over Wi-Fi to the RAINWISE server.</li>
+    <li>The server saves them in a database and works out level, litres and advice.</li>
+    <li>This website shows the results in simple form.</li>
+  </ol>
+  <div class="card"><h4>Good to know</h4>
+    <p>The rain sensor shows how wet it is (none, light, heavy). It does not measure millimetres of rain. Use the Calculator with rainfall from a weather report or rain gauge.</p>
+    <p>When no hardware is connected, the Dashboard and Tips show <strong>demo data</strong>, clearly labelled.</p></div>
+  <p class="muted">Add your team and college name here.</p>
+</section>
+
+</main>
+
+<footer class="site-footer"><div class="wrap">RAINWISE · Community Service Project · Collect rain, save water.</div></footer>
+<script src="app.js"></script>
+</body>
+</html>
