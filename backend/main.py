@@ -15,7 +15,10 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 BASE = Path(__file__).resolve().parent
-DB_PATH = os.environ.get("RAINWISE_DB", str(BASE / "rainwise.db"))
+DB_PATH = os.environ.get(
+    "RAINWISE_DB",
+    "/tmp/rainwise.db" if os.environ.get("VERCEL") else str(BASE / "rainwise.db")
+)
 API_KEY = os.environ.get("RAINWISE_API_KEY", "change-me")  # ESP32 must send the same key
 LIVE_WINDOW_MIN = 10  # a reading newer than this counts as "hardware connected"
 
